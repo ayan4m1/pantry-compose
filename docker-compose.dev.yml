@@ -1,0 +1,7 @@
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+  identity:
+    ports:
+      - "11385:8080"

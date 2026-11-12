@@ -1,0 +1,6 @@
+[submodule "gateway"]
+	path = gateway
+	url = git@github.com:ayan4m1/pantry-gateway.git
+[submodule "identity"]
+	path = identity
+	url = git@github.com:ayan4m1/pantry-identity.git
