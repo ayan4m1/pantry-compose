@@ -5,16 +5,23 @@ services:
       - "8080:8080"
     depends_on:
       - identity
+      - inventory
 
   identity:
     build: ./identity
     depends_on:
       postgres-identity:
         condition: service_healthy
-      keycloak:
-        condition: service_started
     environment:
       ConnectionStrings__IdentityDb: "Host=postgres-identity;Port=5432;Database=pantry_identity;Username=pantry;Password=pantry"
+
+  inventory:
+    build: ./inventory
+    depends_on:
+      postgres-inventory:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=pantry"
 
   postgres-identity:
     image: postgres:16
@@ -23,7 +30,21 @@ services:
       POSTGRES_USER: pantry
       POSTGRES_PASSWORD: pantry
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-id-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-inventory:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pantry_inventory
+      POSTGRES_USER: pantry
+      POSTGRES_PASSWORD: pantry
+    volumes:
+      - postgres-inv-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -68,5 +89,6 @@ services:
         condition: service_healthy
 
 volumes:
-  postgres-data:
+  postgres-id-data:
+  postgres-inv-data:
   keycloak-data:
