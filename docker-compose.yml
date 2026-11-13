@@ -30,7 +30,7 @@ services:
       POSTGRES_USER: pantry
       POSTGRES_PASSWORD: pantry
     volumes:
-      - postgres-id-data:/var/lib/postgresql/data
+      - pg-id-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -44,7 +44,7 @@ services:
       POSTGRES_USER: pantry
       POSTGRES_PASSWORD: pantry
     volumes:
-      - postgres-inv-data:/var/lib/postgresql/data
+      - pg-inv-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -58,7 +58,7 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
     volumes:
-      - keycloak-data:/var/lib/postgresql/data
+      - pg-keycloak-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -89,6 +89,6 @@ services:
         condition: service_healthy
 
 volumes:
-  postgres-id-data:
-  postgres-inv-data:
-  keycloak-data:
+  pg-id-data:
+  pg-inv-data:
+  pg-keycloak-data:
