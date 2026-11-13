@@ -5,6 +5,14 @@ x-pg-healthcheck: &pg-healthcheck
     timeout: 5s
     retries: 5
 
+x-identity-conn: &identity-conn
+  environment:
+    ConnectionStrings__IdentityDb: "Host=postgres-identity;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
+
+x-inventory-conn: &inventory-conn
+  environment:
+    ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}"
+
 services:
   gateway:
     build: ./gateway
@@ -15,43 +23,33 @@ services:
       - inventory
 
   identity:
+    <<: *identity-conn
     build: ./identity
     depends_on:
       postgres-identity:
         condition: service_healthy
-    environment:
-      ConnectionStrings__IdentityDb: "Host=postgres-identity;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
 
   identity-migrator:
+    <<: *identity-conn
     build:
       context: ./identity
       target: migrator
-    command:
-      [
-        "--connection",
-        "Host=postgres-identity;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}",
-      ]
     depends_on:
       postgres-identity:
         condition: service_healthy
 
   inventory:
+    <<: *inventory-conn
     build: ./inventory
     depends_on:
       postgres-inventory:
         condition: service_healthy
-    environment:
-      ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}"
 
   inventory-migrator:
+    <<: *inventory-conn
     build:
       context: ./inventory
       target: migrator
-    command:
-      [
-        "--connection",
-        "Host=postgres-inventory;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}",
-      ]
     depends_on:
       postgres-inventory:
         condition: service_healthy
