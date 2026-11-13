@@ -20,7 +20,20 @@ services:
       postgres-identity:
         condition: service_healthy
     environment:
-      ConnectionStrings__IdentityDb: "Host=postgres-identity;Port=5432;Database=pantry_identity;Username=pantry;Password=pantry"
+      ConnectionStrings__IdentityDb: "Host=postgres-identity;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
+
+  identity-migrator:
+    build:
+      context: ./identity
+      target: migrator
+    command:
+      [
+        "--connection",
+        "Host=postgres-identity;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}",
+      ]
+    depends_on:
+      postgres-identity:
+        condition: service_healthy
 
   inventory:
     build: ./inventory
@@ -28,7 +41,20 @@ services:
       postgres-inventory:
         condition: service_healthy
     environment:
-      ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=pantry"
+      ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}"
+
+  inventory-migrator:
+    build:
+      context: ./inventory
+      target: migrator
+    command:
+      [
+        "--connection",
+        "Host=postgres-inventory;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}",
+      ]
+    depends_on:
+      postgres-inventory:
+        condition: service_healthy
 
   postgres-identity:
     <<: *pg-healthcheck
@@ -56,7 +82,7 @@ services:
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASS}
     volumes:
       - pg-keycloak-data:/var/lib/postgresql/data
 
@@ -68,11 +94,11 @@ services:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak
       KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASS}
 
       # Initial admin credentials (Keycloak 26+ syntax)
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASS}
 
       # Hostname settings for local development
       KC_HOSTNAME: localhost
