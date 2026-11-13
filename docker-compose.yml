@@ -1,3 +1,10 @@
+x-pg-healthcheck: &pg-healthcheck
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+    interval: 5s
+    timeout: 5s
+    retries: 5
+
 services:
   gateway:
     build: ./gateway
@@ -24,6 +31,7 @@ services:
       ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=pantry"
 
   postgres-identity:
+    <<: *pg-healthcheck
     image: postgres:16
     environment:
       POSTGRES_DB: pantry_identity
@@ -31,13 +39,9 @@ services:
       POSTGRES_PASSWORD: pantry
     volumes:
       - pg-id-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   postgres-inventory:
+    <<: *pg-healthcheck
     image: postgres:16
     environment:
       POSTGRES_DB: pantry_inventory
@@ -45,13 +49,9 @@ services:
       POSTGRES_PASSWORD: pantry
     volumes:
       - pg-inv-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   postgres-keycloak:
+    <<: *pg-healthcheck
     image: postgres:16
     environment:
       POSTGRES_DB: keycloak
@@ -59,11 +59,6 @@ services:
       POSTGRES_PASSWORD: keycloak
     volumes:
       - pg-keycloak-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.8
