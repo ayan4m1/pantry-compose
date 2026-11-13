@@ -62,7 +62,7 @@ services:
     environment:
       POSTGRES_DB: pantry_identity
       POSTGRES_USER: pantry
-      POSTGRES_PASSWORD: pantry
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
     volumes:
       - pg-id-data:/var/lib/postgresql/data
 
@@ -72,7 +72,7 @@ services:
     environment:
       POSTGRES_DB: pantry_inventory
       POSTGRES_USER: pantry
-      POSTGRES_PASSWORD: pantry
+      POSTGRES_PASSWORD: ${INVENTORY_DB_PASS}
     volumes:
       - pg-inv-data:/var/lib/postgresql/data
 
