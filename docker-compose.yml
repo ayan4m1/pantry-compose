@@ -21,6 +21,10 @@ services:
     depends_on:
       - identity
       - inventory
+      - frontend
+
+  frontend:
+    build: ./web
 
   identity:
     <<: *identity-conn

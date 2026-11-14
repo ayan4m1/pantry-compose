@@ -4,3 +4,6 @@
 [submodule "identity"]
 	path = identity
 	url = git@github.com:ayan4m1/pantry-identity.git
+[submodule "web"]
+	path = web
+	url = git@github.com:ayan4m1/pantry-web.git

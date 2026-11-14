@@ -1,7 +1,10 @@
 services:
-  postgres:
-    ports:
-      - "5432:5432"
   identity:
     ports:
       - "11385:8080"
+  inventory:
+    ports:
+      - "11386:8080"
+  frontend:
+    ports:
+      - "11389:80"
