@@ -5,6 +5,8 @@ Pantry is a self-hosted sundries tracker.
 ## Usage
 
 ```sh
+git clone --recursive https://github.com/ayan4m1/pantry-compose.git pantry
+cd pantry
 cp .env.default .env
 ```
 
