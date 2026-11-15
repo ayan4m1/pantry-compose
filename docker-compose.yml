@@ -36,6 +36,14 @@ services:
     depends_on:
       postgres-identity:
         condition: service_healthy
+    environment:
+      FrontendSettings__Hostname: http://${GATEWAY_ADDRESS}
+      SmtpSettings__Host: ${SMTP_HOST}
+      SmtpSettings__Port: ${SMTP_PORT}
+      SmtpSettings__Username: ${SMTP_USERNAME}
+      SmtpSettings__Password: ${SMTP_PASSWORD}
+      SmtpSettings__SenderName: ${SMTP_SENDER_NAME}
+      SmtpSettings__SenderEmail: ${SMTP_SENDER_EMAIL}
 
   identity-migrator:
     <<: *identity-conn
