@@ -60,8 +60,6 @@ services:
     depends_on:
       postgres-inventory:
         condition: service_healthy
-    environment:
-      AllowedOrigins__0: http://${GATEWAY_ADDRESS}
 
   inventory-migrator:
     <<: *inventory-conn
