@@ -16,4 +16,4 @@ Change the default credentials to bespoke ones in `.env`.
 docker compose up -d
 ```
 
-Now the application is listening on port 8080.
+Now the application is listening on the port specified as `PROXY_PORT` in `.env`.
