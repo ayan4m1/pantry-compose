@@ -179,7 +179,7 @@ services:
     ports:
       - "11384:8080"
     depends_on:
-      postgres-keycloak:
+      keycloak-db:
         condition: service_healthy
 
 volumes:
