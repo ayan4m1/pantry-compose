@@ -27,7 +27,7 @@ x-inventory-conn: &inventory-conn
   ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}"
 
 x-shopping-conn: &shopping-conn
-  ConnectionStrings__ShoppingDb: "Host=postgres-shopping;Port=5432;Database=pantry_inventory;Username=pantry;Password=${SHOPPING_DB_PASS}"
+  ConnectionStrings__ShoppingDb: "Host=postgres-shopping;Port=5432;Database=pantry_shopping;Username=pantry;Password=${SHOPPING_DB_PASS}"
 
 x-cors-env: &cors-env
   AllowedOrigins__0: http://${GATEWAY_ADDRESS}
