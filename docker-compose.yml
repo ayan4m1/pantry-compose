@@ -181,10 +181,6 @@ services:
       postgres-keycloak:
         condition: service_healthy
 
-  create-user:
-    build: ./create-user
-    profiles: ["bootstrap"]
-
 volumes:
   pg-id-data:
   pg-inv-data:
