@@ -129,6 +129,7 @@ services:
         condition: service_completed_successfully
     environment:
       <<: [*shopping-conn, *cors-env]
+      IdentitySettings__BaseUrl: http://identity:8080/
 
   shopping-migrator:
     environment: *shopping-conn
