@@ -21,13 +21,13 @@ x-api-healthcheck: &api-healthcheck
     start_period: 10s
 
 x-identity-conn: &identity-conn
-  ConnectionStrings__IdentityDb: "Host=postgres-identity;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
+  ConnectionStrings__IdentityDb: "Host=identity-db;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
 
 x-inventory-conn: &inventory-conn
-  ConnectionStrings__InventoryDb: "Host=postgres-inventory;Port=5432;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}"
+  ConnectionStrings__InventoryDb: "Host=inventory-db;Port=5432;Database=pantry_inventory;Username=pantry;Password=${INVENTORY_DB_PASS}"
 
 x-shopping-conn: &shopping-conn
-  ConnectionStrings__ShoppingDb: "Host=postgres-shopping;Port=5432;Database=pantry_shopping;Username=pantry;Password=${SHOPPING_DB_PASS}"
+  ConnectionStrings__ShoppingDb: "Host=shopping-db;Port=5432;Database=pantry_shopping;Username=pantry;Password=${SHOPPING_DB_PASS}"
 
 x-cors-env: &cors-env
   AllowedOrigins__0: http://${GATEWAY_ADDRESS}
@@ -54,7 +54,7 @@ services:
     <<: *api-healthcheck
     build: ./identity
     depends_on:
-      postgres-identity:
+      identity-db:
         condition: service_healthy
       identity-migrator:
         condition: service_completed_successfully
@@ -75,14 +75,24 @@ services:
       context: ./identity
       target: migrator
     depends_on:
-      postgres-identity:
+      identity-db:
         condition: service_healthy
+
+  identity-db:
+    <<: *pg-healthcheck
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pantry_identity
+      POSTGRES_USER: pantry
+      POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
+    volumes:
+      - pg-id-data:/var/lib/postgresql/data
 
   inventory:
     <<: *api-healthcheck
     build: ./inventory
     depends_on:
-      postgres-inventory:
+      inventory-db:
         condition: service_healthy
       inventory-migrator:
         condition: service_completed_successfully
@@ -96,14 +106,24 @@ services:
       context: ./inventory
       target: migrator
     depends_on:
-      postgres-inventory:
+      inventory-db:
         condition: service_healthy
+
+  inventory-db:
+    <<: *pg-healthcheck
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pantry_inventory
+      POSTGRES_USER: pantry
+      POSTGRES_PASSWORD: ${INVENTORY_DB_PASS}
+    volumes:
+      - pg-inv-data:/var/lib/postgresql/data
 
   shopping:
     <<: *api-healthcheck
     build: ./shopping
     depends_on:
-      postgres-shopping:
+      shopping-db:
         condition: service_healthy
       shopping-migrator:
         condition: service_completed_successfully
@@ -116,30 +136,10 @@ services:
       context: ./shopping
       target: migrator
     depends_on:
-      postgres-shopping:
+      shopping-db:
         condition: service_healthy
 
-  postgres-identity:
-    <<: *pg-healthcheck
-    image: postgres:16
-    environment:
-      POSTGRES_DB: pantry_identity
-      POSTGRES_USER: pantry
-      POSTGRES_PASSWORD: ${IDENTITY_DB_PASS}
-    volumes:
-      - pg-id-data:/var/lib/postgresql/data
-
-  postgres-inventory:
-    <<: *pg-healthcheck
-    image: postgres:16
-    environment:
-      POSTGRES_DB: pantry_inventory
-      POSTGRES_USER: pantry
-      POSTGRES_PASSWORD: ${INVENTORY_DB_PASS}
-    volumes:
-      - pg-inv-data:/var/lib/postgresql/data
-
-  postgres-shopping:
+  shopping-db:
     <<: *pg-healthcheck
     image: postgres:16
     environment:
