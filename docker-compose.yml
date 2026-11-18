@@ -34,7 +34,7 @@ services:
         condition: service_healthy
     environment:
       <<: [*identity-conn, *cors-env]
-      FrontendSettings__Hostname: http://${GATEWAY_ADDRESS}
+      FrontendSettings__BaseUrl: http://${GATEWAY_ADDRESS}
       InventorySettings__BaseUrl: http://inventory:8080/
       SmtpSettings__Host: ${SMTP_HOST}
       SmtpSettings__Port: ${SMTP_PORT}
