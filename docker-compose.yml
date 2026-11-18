@@ -56,6 +56,8 @@ services:
     depends_on:
       postgres-identity:
         condition: service_healthy
+      identity-migrator:
+        condition: service_completed_successfully
     environment:
       <<: [*identity-conn, *cors-env]
       FrontendSettings__BaseUrl: http://${GATEWAY_ADDRESS}
@@ -82,6 +84,8 @@ services:
     depends_on:
       postgres-inventory:
         condition: service_healthy
+      inventory-migrator:
+        condition: service_completed_successfully
     environment:
       <<: [*inventory-conn, *cors-env]
       IdentitySettings__BaseUrl: http://identity:8080/
@@ -101,6 +105,8 @@ services:
     depends_on:
       postgres-shopping:
         condition: service_healthy
+      shopping-migrator:
+        condition: service_completed_successfully
     environment:
       <<: [*shopping-conn, *cors-env]
 
