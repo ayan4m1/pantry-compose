@@ -76,7 +76,7 @@ services:
   shopping:
     build: ./shopping
     depends_on:
-      postgres_shopping:
+      postgres-shopping:
         condition: service_healthy
     environment:
       <<: [*shopping-conn, *cors-env]
@@ -110,6 +110,16 @@ services:
     volumes:
       - pg-inv-data:/var/lib/postgresql/data
 
+  postgres-shopping:
+    <<: *pg-healthcheck
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pantry_shopping
+      POSTGRES_USER: pantry
+      POSTGRES_PASSWORD: ${SHOPPING_DB_PASS}
+    volumes:
+      - pg-shop-data:/var/lib/postgresql/data
+
   postgres-keycloak:
     <<: *pg-healthcheck
     image: postgres:16
@@ -142,7 +152,12 @@ services:
       postgres-keycloak:
         condition: service_healthy
 
+  create-user:
+    build: ./create-user
+    profiles: ["bootstrap"]
+
 volumes:
   pg-id-data:
   pg-inv-data:
+  pg-shop-data:
   pg-keycloak-data:
