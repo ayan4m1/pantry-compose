@@ -5,6 +5,6 @@ services:
   inventory:
     ports:
       - "11386:8080"
-  frontend:
+  web:
     ports:
       - "11389:80"

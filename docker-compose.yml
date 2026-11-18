@@ -22,9 +22,9 @@ services:
     depends_on:
       - identity
       - inventory
-      - frontend
+      - web
 
-  frontend:
+  web:
     build: ./web
 
   identity:
