@@ -5,6 +5,9 @@ services:
   inventory:
     ports:
       - "11386:8080"
+  shopping:
+    ports:
+      - "11387:8080"
   web:
     ports:
       - "11389:80"
