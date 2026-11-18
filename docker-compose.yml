@@ -150,6 +150,24 @@ services:
     volumes:
       - pg-shop-data:/var/lib/postgresql/data
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASS}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASS}
+      KC_HOSTNAME: ${GATEWAY_ADDRESS}
+      KC_HEALTH_ENABLED: "true"
+    ports:
+      - "11384:8080"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
   keycloak-db:
     <<: *pg-healthcheck
     image: postgres:16
@@ -159,28 +177,6 @@ services:
       POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASS}
     volumes:
       - pg-keycloak-data:/var/lib/postgresql/data
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.8
-    command: start-dev
-    environment:
-      # Database configuration
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASS}
-
-      # Initial admin credentials (Keycloak 26+ syntax)
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASS}
-
-      KC_HOSTNAME: ${GATEWAY_ADDRESS}
-      KC_HEALTH_ENABLED: "true"
-    ports:
-      - "11384:8080"
-    depends_on:
-      keycloak-db:
-        condition: service_healthy
 
 volumes:
   pg-id-data:
