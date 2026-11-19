@@ -62,6 +62,7 @@ services:
       <<: [*identity-conn, *cors-env]
       FrontendSettings__BaseUrl: http://${GATEWAY_ADDRESS}
       InventorySettings__BaseUrl: http://inventory:8080/
+      ShoppingSettings__BaseUrl: http://shopping:8080/
       SmtpSettings__Host: ${SMTP_HOST}
       SmtpSettings__Port: ${SMTP_PORT}
       SmtpSettings__Username: ${SMTP_USERNAME}
@@ -99,6 +100,7 @@ services:
     environment:
       <<: [*inventory-conn, *cors-env]
       IdentitySettings__BaseUrl: http://identity:8080/
+      ShoppingSettings__BaseUrl: http://shopping:8080/
 
   inventory-migrator:
     environment: *inventory-conn
@@ -130,6 +132,7 @@ services:
     environment:
       <<: [*shopping-conn, *cors-env]
       IdentitySettings__BaseUrl: http://identity:8080/
+      InventorySettings__BaseUrl: http://inventory:8080/
 
   shopping-migrator:
     environment: *shopping-conn
