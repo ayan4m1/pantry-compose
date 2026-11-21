@@ -1,11 +1,21 @@
+x-cors-env: &cors-env
+  AllowedOrigins__0: http://${GATEWAY_ADDRESS}
+  AllowedOrigins__1: http://localhost:8080
+
 services:
   identity:
+    environment:
+      <<: [*cors-env]
     ports:
       - "11385:8080"
   inventory:
+    environment:
+      <<: [*cors-env]
     ports:
       - "11386:8080"
   shopping:
+    environment:
+      <<: [*cors-env]
     ports:
       - "11387:8080"
   web:
