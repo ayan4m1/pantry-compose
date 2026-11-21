@@ -20,6 +20,12 @@ x-api-healthcheck: &api-healthcheck
     retries: 10
     start_period: 10s
 
+x-api-keycloak: &api-keycloak
+  Keycloak__MetadataAddress: http://keycloak:8080/realms/pantry/.well-known/openid-configuration
+  Keycloak__Authority: http://${GATEWAY_ADDRESS}:11384/realms/pantry
+  Keycloak__Audience: pantry-web
+  Keycloak__AllowHttp: true
+
 x-identity-conn: &identity-conn
   ConnectionStrings__IdentityDb: "Host=identity-db;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
 
@@ -59,7 +65,7 @@ services:
       identity-migrator:
         condition: service_completed_successfully
     environment:
-      <<: [*identity-conn, *cors-env]
+      <<: [*identity-conn, *cors-env, *api-keycloak]
       FrontendSettings__BaseUrl: http://${GATEWAY_ADDRESS}
       InventorySettings__BaseUrl: http://inventory:8080/
       ShoppingSettings__BaseUrl: http://shopping:8080/
@@ -98,7 +104,7 @@ services:
       inventory-migrator:
         condition: service_completed_successfully
     environment:
-      <<: [*inventory-conn, *cors-env]
+      <<: [*inventory-conn, *cors-env, *api-keycloak]
       IdentitySettings__BaseUrl: http://identity:8080/
       ShoppingSettings__BaseUrl: http://shopping:8080/
 
@@ -130,7 +136,7 @@ services:
       shopping-migrator:
         condition: service_completed_successfully
     environment:
-      <<: [*shopping-conn, *cors-env]
+      <<: [*shopping-conn, *cors-env, *api-keycloak]
       IdentitySettings__BaseUrl: http://identity:8080/
       InventorySettings__BaseUrl: http://inventory:8080/
 
@@ -163,7 +169,8 @@ services:
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASS}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASS}
-      KC_HOSTNAME: ${GATEWAY_ADDRESS}
+      KC_HOSTNAME: http://${GATEWAY_ADDRESS}:11384
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_HEALTH_ENABLED: "true"
     ports:
       - "11384:8080"
