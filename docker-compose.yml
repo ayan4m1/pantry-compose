@@ -54,7 +54,12 @@ services:
         condition: service_started
 
   web:
-    build: ./web
+    build:
+      context: ./web
+      additional_contexts:
+        identity-spec: "service:identity"
+        inventory-spec: "service:inventory"
+        shopping-spec: "service:shopping"
 
   identity:
     <<: *api-healthcheck
