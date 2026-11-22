@@ -24,7 +24,7 @@ x-api-keycloak: &api-keycloak
   Keycloak__MetadataAddress: http://keycloak:8080/realms/pantry/.well-known/openid-configuration
   Keycloak__Authority: http://${GATEWAY_ADDRESS}:11384/realms/pantry
   Keycloak__Audience: pantry-web
-  Keycloak__AllowHttp: true
+  Keycloak__AllowHttp: "true"
 
 x-identity-conn: &identity-conn
   ConnectionStrings__IdentityDb: "Host=identity-db;Port=5432;Database=pantry_identity;Username=pantry;Password=${IDENTITY_DB_PASS}"
